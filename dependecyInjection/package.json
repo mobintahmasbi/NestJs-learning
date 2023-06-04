@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "module": "module",
+  "type": "module",
   "scripts": {
-    "dev": "ts-node src/server.ts",
-    "start": "ts-node build/server.js",
+    "dev": "ts-node src/training.ts",
+    "start": "ts-node build/training.js",
     "build": "tsc -p .",
     "command": "ts-node command.ts"
   },

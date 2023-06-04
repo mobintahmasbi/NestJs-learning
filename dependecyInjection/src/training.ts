@@ -1,10 +1,19 @@
 import { inject, injectable, Container } from "inversify";
+import "reflect-metadata";
+
+interface IDriver {
+  drive(pointA: string, pointB: string): void;
+}
+
+interface IRouteNavigator {
+  navigate(pointA: string, pointB: string): void;
+}
 
 @injectable()
 class Lawyer {
-  driver: Driver;
+  driver: IDriver;
 
-  constructor(@inject(Driver) driver: Driver) {
+  constructor(@inject("IDriver") driver: IDriver) {
     this.driver = driver;
   }
 
@@ -15,10 +24,10 @@ class Lawyer {
 }
 
 @injectable()
-class Driver {
-  navigator: RouteNavigator;
+class Driver implements IDriver {
+  navigator: IRouteNavigator;
 
-  constructor(@inject(RouteNavigator) navigator: RouteNavigator) {
+  constructor(@inject("IRouteNavigator") navigator: IRouteNavigator) {
     this.navigator = navigator;
   }
 
@@ -37,7 +46,8 @@ class SnappDriver extends Driver {
   }
 }
 
-class RouteNavigator {
+@injectable()
+class RouteNavigator implements IRouteNavigator {
   navigate(pointA: string, pointB: string) {
     console.log(`I am navigating from ${pointA} to ${pointB}`);
   }
@@ -45,11 +55,9 @@ class RouteNavigator {
 
 const container = new Container();
 
-
 container.bind<Lawyer>(Lawyer).to(Lawyer);
-container.bind<Driver>(Driver).to(Driver);
-container.bind<RouteNavigator>(RouteNavigator).to(RouteNavigator);
-
+container.bind<Driver>("IDriver").to(Driver);
+container.bind<IRouteNavigator>("IRouteNavigator").to(RouteNavigator);
 
 const lawyer = container.resolve<Lawyer>(Lawyer);
 lawyer.goToCourt();
